@@ -1,355 +1,340 @@
 #include <iostream>
-#include <vector>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
 #include <map>
+#include <vector>
 #include <limits>
+#include <string>
+
 using namespace std;
 
 struct MenuItem {
     string allergy;
     double price;
+    // คอนสตรัคเตอร์สำหรับกำหนดค่าเริ่มต้น
+    MenuItem() : allergy(""), price(0.0) {}
+    MenuItem(const string &a, double p) : allergy(a), price(p) {}
 };
 
-map<string, MenuItem> menu; 
-map<int, string> itemNumbers;
-const string ownerPassword = "1234"; // รหัสผ่านของเจ้าของร้าน
+map<string, MenuItem> menu;         // key: ชื่อเมนู
+map<int, string> itemNumbers;         // key: ลำดับที่, value: ชื่อเมนู
 
-void savemenu() {
+const string ownerPassword = "1234";
+
+// ฟังก์ชันบันทึกเมนูลงไฟล์
+void saveMenu() {
     ofstream file("menu.txt");
     if (!file) {
-        cout << "Error saving menu!\n";
+        cout << "Error saving menu!" << endl;
         return;
     }
-
-    for (const auto& item : menu) {
-        file << item.first << "," << item.second.allergy << "," << item.second.price << "\n";
+    for (map<string, MenuItem>::const_iterator it = menu.begin(); it != menu.end(); ++it) {
+        file << it->first << "," << it->second.allergy << "," << it->second.price << "\n";
     }
-
-    file.close();
 }
 
-void loadmenu() {
+// ฟังก์ชันโหลดเมนูจากไฟล์
+void loadMenu() {
     ifstream file("menu.txt");
     if (!file) {
-        cout << "No existing menu file found. Starting fresh.\n";
+        cout << "No existing menu file found. Starting fresh." << endl;
         return;
     }
-
     menu.clear();
-    string line, name, allergy, priceStr;
-
+    string line;
     while (getline(file, line)) {
-        stringstream ss(line);
+        istringstream ss(line);
+        string name, allergy, priceStr;
         if (getline(ss, name, ',') && getline(ss, allergy, ',') && getline(ss, priceStr)) {
             try {
                 double price = stod(priceStr);
-                menu[name] = {allergy, price};
+                // ใช้คอนสตรัคเตอร์แทน initializer list
+                menu[name] = MenuItem(allergy, price);
             } catch (...) {
-                cout << "Error loading line: " << line << " (Skipping)\n";
+                cout << "Error parsing line: " << line << ". Skipping." << endl;
             }
         }
     }
-
-    file.close();
 }
 
-void recheckItemNumbers() {
-    itemNumbers.clear(); 
-    int number = 1;
-    for (const auto& item : menu) {
-        itemNumbers[number] = item.first;
-        number++;
+// อัปเดตลำดับหมายเลขของรายการในเมนู
+void updateItemNumbers() {
+    itemNumbers.clear();
+    int index = 1;
+    for (map<string, MenuItem>::const_iterator it = menu.begin(); it != menu.end(); ++it) {
+        itemNumbers[index++] = it->first;
     }
 }
 
-void menudisplay() {
-    if (menu.empty()) {
-        cout << "\nMenu is empty!\n";
-    } else {
-        cout << "\n------ Menu ------\n";
-        int index = 1;
-        for (const auto &item : menu) {
-            cout << "[" << index << "] " << item.first 
-                 << " - Allergy: " << item.second.allergy
-                 << " - $" << fixed << setprecision(2) << item.second.price << "\n";
-            index++;
+// ฟังก์ชันรับบรรทัดจากผู้ใช้ พร้อมแสดงข้อความ prompt (ถ้ามี)
+string getInputLine(const string &prompt = "") {
+    if (!prompt.empty())
+        cout << prompt;
+    string input;
+    getline(cin, input);
+    return input;
+}
+
+// พยายามแปลง string เป็น int
+bool tryParseInt(const string &input, int &number) {
+    try {
+        number = stoi(input);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
+// รับชื่อรายการเมนูจากอินพุต ซึ่งอาจเป็นตัวเลข (ลำดับ) หรือชื่อรายการ
+string getMenuItemNameFromInput() {
+    string input = getInputLine();
+    int num;
+    if (tryParseInt(input, num)) {
+        updateItemNumbers();
+        if (itemNumbers.find(num) != itemNumbers.end())
+            return itemNumbers[num];
+        else {
+            cout << "Invalid item number." << endl;
+            return "";
         }
-        recheckItemNumbers();
     }
+    return input;
 }
 
-void searchmenu() {
-    string itemName;
-    cout << "\nEnter the name of the menu item to search: ";
-    cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
-    getline(cin, itemName);
+// แสดงรายการเมนูทั้งหมด
+void displayMenu() {
+    if (menu.empty()) {
+        cout << "\nMenu is empty!" << endl;
+        return;
+    }
+    cout << "\n------ Menu ------" << endl;
+    int index = 1;
+    for (map<string, MenuItem>::const_iterator it = menu.begin(); it != menu.end(); ++it) {
+        cout << "[" << index++ << "] " << it->first 
+             << " - Allergy: " << it->second.allergy 
+             << " - $" << fixed << setprecision(2) << it->second.price << endl;
+    }
+    updateItemNumbers();
+}
 
-    auto it = menu.find(itemName);
+// ค้นหารายการเมนูตามชื่อ
+void searchMenu() {
+    string name = getInputLine("\nEnter the name of the menu item to search: ");
+    map<string, MenuItem>::iterator it = menu.find(name);
     if (it != menu.end()) {
-        cout << "\nItem found: " << it->first 
-             << " - Allergy: " << it->second.allergy
-             << " - $" << fixed << setprecision(2) << it->second.price << "\n";
+        cout << "Item found: " << name 
+             << " - Allergy: " << it->second.allergy 
+             << " - $" << fixed << setprecision(2) << it->second.price << endl;
     } else {
-        cout << "\nItem not found in the menu!\n";
+        cout << "Item not found in the menu!" << endl;
     }
 }
 
-void recommendedmenu() {
+// แสดงรายการแนะนำ (แค่ 3 รายการแรก)
+void recommendMenu() {
     if (menu.empty()) {
-        cout << "\nNo menu items available for recommendation.\n";
+        cout << "\nNo menu items available for recommendation." << endl;
         return;
     }
-
-    cout << "\n---- Recommended Menu ----\n";
+    cout << "\n---- Recommended Menu ----" << endl;
     int count = 0;
-    for (const auto &item : menu) {
-        cout << "- " << item.first 
-             << " (Allergy: " << item.second.allergy << ")"
-             << " - $" << fixed << setprecision(2) << item.second.price << "\n";
-        if (++count >= 3) break; 
+    for (map<string, MenuItem>::const_iterator it = menu.begin(); it != menu.end(); ++it) {
+        cout << "- " << it->first 
+             << " (Allergy: " << it->second.allergy << ")"
+             << " - $" << fixed << setprecision(2) << it->second.price << endl;
+        if (++count >= 3)
+            break;
     }
 }
 
-void orderfood() {
+// ฟังก์ชันสั่งอาหาร
+void orderFood() {
     if (menu.empty()) {
-        cout << "\nMenu is empty! Cannot place an order.\n";
+        cout << "\nMenu is empty! Cannot place an order." << endl;
         return;
     }
-
-    vector<pair<string, int>> order;
-    int itemNumber;
-    string itemName;
-    int quantity;
-    char more;
-
-    menudisplay();
-    recheckItemNumbers();
-
-    cin.ignore(); // ใช้แค่ครั้งเดียวก่อนลูป
-    do {
+    // เปลี่ยนจาก initializer list เป็นการใช้ make_pair และเว้นวรรคระหว่าง > >
+    vector< pair<string, int> > order;
+    displayMenu();
+    
+    while (true) {
         cout << "\nEnter the menu item number or name to order: ";
-        string input;
-        getline(cin, input);
-
-        try {
-            itemNumber = stoi(input);
-            if (itemNumbers.find(itemNumber) != itemNumbers.end()) {
-                itemName = itemNumbers[itemNumber];
-            } else {
-                cout << "Invalid item number.\n";
-                continue;
-            }
-        } catch (...) {
-            itemName = input;
-        }
-
+        string itemName = getMenuItemNameFromInput();
+        if (itemName == "")
+            continue;
         if (menu.find(itemName) != menu.end()) {
             cout << "Enter quantity: ";
+            int quantity;
             cin >> quantity;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-            order.push_back({itemName, quantity});
-            cout << "Added " << quantity << "x " << itemName 
-                 << " (Allergy: " << menu[itemName].allergy << ")"
-                 << " to your order.\n";
+            order.push_back(make_pair(itemName, quantity));
+            cout << "Added " << quantity << "x " << itemName << " to your order." << endl;
         } else {
-            cout << "Item not found in the menu!\n";
+            cout << "Item not found in the menu!" << endl;
         }
-
+        char more;
         cout << "Do you want to order more? (y/n): ";
         cin >> more;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // ป้องกันการข้ามอินพุต
-    } while (more == 'y' || more == 'Y');
-
-    cout << "\n------ Your Order ------\n";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        if (more != 'y' && more != 'Y')
+            break;
+    }
+    
+    cout << "\n------ Your Order ------" << endl;
     double total = 0;
-    for (const auto &item : order) {
-        double price = menu[item.first].price * item.second;
-        cout << item.second << "x " << item.first 
-             << " - $" << fixed << setprecision(2) << price << "\n";
+    for (vector< pair<string, int> >::const_iterator it = order.begin(); it != order.end(); ++it) {
+        double price = menu[it->first].price * it->second;
+        cout << it->second << "x " << it->first 
+             << " - $" << fixed << setprecision(2) << price << endl;
         total += price;
     }
-    cout << "------------------------\n";
-    cout << "Total: $" << fixed << setprecision(2) << total << "\n";
+    cout << "Total: $" << fixed << setprecision(2) << total << endl;
 }
 
-void customermode() {
+// เมนูสำหรับลูกค้า
+void customerMode() {
     while (true) {
-        char choice;
-        cout << "\n-----   Customer Menu  -----";
-        cout << "\n--- Please Make a Choice ---\n";
-        cout << "[1] View Menu\n";
-        cout << "[2] Order Food\n"; 
-        cout << "[3] Search Menu\n";
-        cout << "[4] Recommended Menu\n";
-        cout << "[5] Back to Main Menu\n";
+        cout << "\n----- Customer Menu -----" << endl;
+        cout << "[1] View Menu" << endl;
+        cout << "[2] Order Food" << endl;
+        cout << "[3] Search Menu" << endl;
+        cout << "[4] Recommended Menu" << endl;
+        cout << "[5] Back to Main Menu" << endl;
         cout << "Enter choice: ";
+        char choice;
         cin >> choice;
-
-        switch (choice) {
-            case '1': menudisplay();
-            break;
-            case '2': orderfood();
-            break;
-            case '3': searchmenu();
-            break;
-            case '4': recommendedmenu();
-            break;
-            case '5': return;
-            default: cout << "Invalid choice! Please try again.\n";
-        }
-    }
-}
-
-void addmenuitem() {
-    string itemName, allergy;
-    double itemPrice;
-
-    cout << "\nEnter new menu item name: ";
-    cin.ignore(); 
-    getline(cin, itemName);
-
-    cout << "Enter allergy information (if none, type '-'): ";
-    getline(cin, allergy);
-
-    cout << "Enter price for " << itemName << ": ";
-    cin >> itemPrice;
-
-    menu[itemName] = {allergy, itemPrice};
-    savemenu();
-    cout << itemName << " has been added to the menu with a price of $" 
-         << itemPrice << " and allergy information: " << allergy << "\n";
-}
-
-void removemenuitem() {
-    int itemNumber;
-    string itemName;
-    menudisplay();
-    cout << "\nEnter the name OR number of the menu item to remove: ";
-    string input;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, input);
-    recheckItemNumbers();
-
-    try {
-        itemNumber = stoi(input); 
-        if (itemNumbers.find(itemNumber) != itemNumbers.end()) {
-            itemName = itemNumbers[itemNumber];
-        } else {
-            cout << "Invalid item number.\n";
-            return;
-        }
-    } catch (const std::invalid_argument& e) {
-        itemName = input; 
-    } catch (const std::out_of_range& e) {
-        cout << "Invalid item number (out of range).\n";
-        return;
-    }
-    if (menu.erase(itemName)) { 
-        savemenu();
-        cout << itemName << " has been removed from the menu.\n";
-    } else {
-        cout << "Item not found!\n";
-    }
-}
-
-void changeprice() {
-    int itemNumber;
-    string itemName;
-    double newPrice;
-    menudisplay();
-    cout << "\nEnter the name OR number of the menu item to change the price: ";
-
-    string input;
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    getline(cin, input);
-
-    recheckItemNumbers();
-
-    try {
-        itemNumber = stoi(input); 
-        if (itemNumbers.find(itemNumber) != itemNumbers.end()) {
-            itemName = itemNumbers[itemNumber];
-        } else {
-            cout << "Invalid item number.\n";
-            return;
-        }
-    } catch (const std::invalid_argument& e) {
-        itemName = input; 
-    } catch (const std::out_of_range& e) {
-        cout << "Invalid item number (out of range).\n";
-        return;
-    }
-
-    if (menu.find(itemName) != menu.end()) { 
-        cout << "Enter new price for " << itemName << ": ";
-        cin >> newPrice;         
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        menu[itemName].price = newPrice;  // แก้ไขเฉพาะสมาชิก price
-        savemenu();
-        cout << fixed << setprecision(2);
-        cout << "Price for " << itemName << " has been updated to $" << newPrice << "\n";
-    } else {
-        cout << "Item not found!\n";
+        switch (choice) {
+            case '1': 
+                displayMenu(); 
+                break;
+            case '2': 
+                orderFood(); 
+                break;
+            case '3': 
+                searchMenu(); 
+                break;
+            case '4': 
+                recommendMenu(); 
+                break;
+            case '5': 
+                return;
+            default: 
+                cout << "Invalid choice! Please try again." << endl;
+        }
     }
 }
 
-void ownermode() {
-    string password;
-    cout << "Enter Owner Password: ";
-    cin >> password;
+// เพิ่มรายการเมนูใหม่
+void addMenuItem() {
+    string name = getInputLine("\nEnter new menu item name: ");
+    string allergy = getInputLine("Enter allergy information (if none, type '-'): ");
+    cout << "Enter price for " << name << ": ";
+    double price;
+    cin >> price;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    menu[name] = MenuItem(allergy, price);
+    saveMenu();
+    cout << name << " has been added to the menu." << endl;
+}
 
+// ลบรายการเมนู
+void removeMenuItem() {
+    displayMenu();
+    cout << "\nEnter the name OR number of the menu item to remove: ";
+    string itemName = getMenuItemNameFromInput();
+    if (itemName == "")
+        return;
+    if (menu.erase(itemName)) {
+        saveMenu();
+        cout << itemName << " has been removed from the menu." << endl;
+    } else {
+        cout << "Item not found!" << endl;
+    }
+}
+
+// เปลี่ยนราคาเมนู
+void changePrice() {
+    displayMenu();
+    cout << "\nEnter the name OR number of the menu item to change the price: ";
+    string itemName = getMenuItemNameFromInput();
+    if (itemName == "")
+        return;
+    if (menu.find(itemName) != menu.end()) {
+        cout << "Enter new price for " << itemName << ": ";
+        double newPrice;
+        cin >> newPrice;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        menu[itemName].price = newPrice;
+        saveMenu();
+        cout << "Price for " << itemName << " has been updated." << endl;
+    } else {
+        cout << "Item not found!" << endl;
+    }
+}
+
+// เมนูสำหรับเจ้าของร้าน (ต้องใส่รหัสผ่าน)
+void ownerMode() {
+    cout << "Enter Owner Password: ";
+    string password;
+    cin >> password;
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     if (password != ownerPassword) {
-        cout << "Incorrect password, GET OUT!!!\n";
+        cout << "Incorrect password, GET OUT!!!" << endl;
         return;
     }
-
     while (true) {
-        char choice;
-        cout << "\n------   Owner Menu   ------";
-        cout << "\n--- Please Make a Choice ---\n";
-        cout << "[1] Add menu item\n";
-        cout << "[2] Remove menu item\n";
-        cout << "[3] Change menu price\n";
-        cout << "[4] Exit owner mode\n";
+        cout << "\n------ Owner Menu ------" << endl;
+        cout << "[1] Add menu item" << endl;
+        cout << "[2] Remove menu item" << endl;
+        cout << "[3] Change menu price" << endl;
+        cout << "[4] Exit owner mode" << endl;
         cout << "Enter choice: ";
+        char choice;
         cin >> choice;
-
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         switch (choice) {
-            case '1': addmenuitem();
-            break;
-            case '2': removemenuitem();
-            break;
-            case '3': changeprice();
-            break;
-            case '4': return;
-            default: cout << "Invalid input! Please try again.\n";
+            case '1': 
+                addMenuItem(); 
+                break;
+            case '2': 
+                removeMenuItem(); 
+                break;
+            case '3': 
+                changePrice(); 
+                break;
+            case '4': 
+                return;
+            default: 
+                cout << "Invalid input! Please try again." << endl;
         }
     }
 }
 
 int main() {
-    loadmenu();
+    loadMenu();
     while (true) {
-        char mode;
-        cout << "\n---- Restaurant System -----";
-        cout << "\n--- Please Make a Choice ---\n";
-        cout << "[1] Customer\n";
-        cout << "[2] Owner\n";
-        cout << "[3] Exit Program\n";
+        cout << "\n---- Restaurant System ----" << endl;
+        cout << "[1] Customer" << endl;
+        cout << "[2] Owner" << endl;
+        cout << "[3] Exit Program" << endl;
         cout << "Enter choice: ";
+        char mode;
         cin >> mode;
-
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         switch (mode) {
-            case '1': customermode();
-            break;
-            case '2': ownermode(); 
-            break;
-            case '3': cout << "Exiting program...\n"; 
-            return 0;
-            default: cout << "Invalid input! Please try again.\n";
+            case '1': 
+                customerMode(); 
+                break;
+            case '2': 
+                ownerMode(); 
+                break;
+            case '3': 
+                cout << "Exiting program..." << endl; 
+                return 0;
+            default: 
+                cout << "Invalid input! Please try again." << endl;
         }
     }
 }
