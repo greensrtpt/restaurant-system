@@ -1,50 +1,50 @@
-ผัดกะเพราไก่,-,40
-ผัดกะเพราทะเล,อาหารทะเล,50
-ต้มยำกุ้ง,อาหารทะเล,60
-ต้มข่าไก่,นมวัว,50
-แกงเขียวหวานไก่,นมวัว,50
-แกงเผ็ดเป็ดย่าง,นมวัว,60
-ต้มจืดเต้าหู้หมูสับ,ถั่วเหลือง,40
-ผัดไทยกุ้งสด,อาหารทะเล,ถั่วลิสง,50
-ผัดไทยหมู,ถั่วลิสง,40
-ข้าวมันไก่,-,40
-ข้าวหมูแดง,-,40
-ข้าวขาหมู,-,40
-ก๋วยเตี๋ยวเรือ,ข้าวสาลี,30
-ก๋วยเตี๋ยวต้มยำ,ข้าวสาลี,30
-ส้มตำไทย,-,30
-ส้มตำปูปลาร้า,อาหารทะเล,30
-ลาบหมู,-,40
-น้ำตกหมู,-,40
-ไก่ย่าง,-,50
-คอหมูย่าง,-,50
-แหนมเนือง,-,60
-ปอเปี๊ยะสด,ข้าวสาลี,40
-ปอเปี๊ยะทอด,ข้าวสาลี,40
-หมูสะเต๊ะ,-,50
-ไก่สะเต๊ะ,-,50
-ข้าวผัดกุ้ง,อาหารทะเล,50
-ข้าวผัดปู,อาหารทะเล,60
-ข้าวผัดหมู,-,40
-ข้าวผัดไก่,-,40
-ข้าวผัดทะเล,อาหารทะเล,60
-ผัดซีอิ๊วหมู,ข้าวสาลี,40
-ผัดซีอิ๊วไก่,ข้าวสาลี,40
-ผัดซีอิ๊วทะเล,อาหารทะเล,ข้าวสาลี,50
-ราดหน้าหมู,ข้าวสาลี,40
-ราดหน้าไก่,ข้าวสาลี,40
-ราดหน้าทะเล,อาหารทะเล,ข้าวสาลี,50
-ข้าวซอยไก่,ข้าวสาลี,50
-ข้าวซอยเนื้อ,ข้าวสาลี,50
-ขนมจีนน้ำยา,-,30
-ขนมจีนน้ำเงี้ยว,-,30
-ข้าวคลุกกะปิ,อาหารทะเล,40
-ข้าวหมกไก่,-,40
-ข้าวหน้าเป็ด,-,50
-ไข่เจียวหมูสับ,-,30
-ผัดพริกแกงหมู,-,40
-ผัดพริกแกงทะเล,อาหารทะเล,50
-ผัดเผ็ดหมูป่า,-,50
-ผัดเผ็ดปลาดุก,อาหารทะเล,60
-แกงจืดเต้าหู้หมูสับ,ถั่วเหลือง,30
-ยำวุ้นเส้นทะเล,อาหารทะเล,50
+Stir-fried Basil Chicken, -, 40
+Stir-fried Basil Seafood, Seafood, 50
+Tom Yum Goong, Seafood, 60
+Tom Kha Gai, Cow's Milk, 50
+Green Curry Chicken, Cow's Milk, 50
+Red Curry Roasted Duck, Cow's Milk, 60
+Clear Soup with Tofu and Minced Pork, Soy, 40
+Pad Thai with Fresh Shrimp, Seafood, Peanuts, 50
+Pad Thai with Pork, Peanuts, 40
+Hainanese Chicken Rice, -, 40
+Roast Pork Rice, -, 40
+Braised Pork Leg Rice, -, 40
+Boat Noodles, Wheat, 30
+Tom Yum Noodles, Wheat, 30
+Thai Papaya Salad, -, 30
+Papaya Salad with Crab and Fermented Fish, Seafood, 30
+Spicy Minced Pork Salad, -, 40
+Grilled Pork Salad, -, 40
+Grilled Chicken, -, 50
+Grilled Pork Neck, -, 50
+Fermented Pork, -, 60
+Fresh Spring Rolls, Wheat, 40
+Fried Spring Rolls, Wheat, 40
+Pork Satay, -, 50
+Chicken Satay, -, 50
+Shrimp Fried Rice, Seafood, 50
+Crab Fried Rice, Seafood, 60
+Pork Fried Rice, -, 40
+Chicken Fried Rice, -, 40
+Seafood Fried Rice, Seafood, 60
+Pad See Ew with Pork, Wheat, 40
+Pad See Ew with Chicken, Wheat, 40
+Pad See Ew with Seafood, Seafood, Wheat, 50
+Rad Na with Pork, Wheat, 40
+Rad Na with Chicken, Wheat, 40
+Rad Na with Seafood, Seafood, Wheat, 50
+Chicken Khao Soi, Wheat, 50
+Beef Khao Soi, Wheat, 50
+Rice Noodles with Curry Sauce, -, 30
+Rice Noodles with Nam Ngiao, -, 30
+Rice with Shrimp Paste, Seafood, 40
+Chicken Biryani, -, 40
+Duck Rice, -, 50
+Minced Pork Omelette, -, 30
+Stir-fried Red Curry Paste with Pork, -, 40
+Stir-fried Red Curry Paste with Seafood, Seafood, 50
+Stir-fried Spicy Wild Pork, -, 50
+Stir-fried Spicy Catfish, Seafood, 60
+Clear Soup with Tofu and Minced Pork, Soy, 30
+Seafood Glass Noodle Salad, Seafood, 50
