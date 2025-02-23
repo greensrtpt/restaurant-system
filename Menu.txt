@@ -5,7 +5,7 @@ Tom Kha Gai, Cow's Milk, 50
 Green Curry Chicken, Cow's Milk, 50
 Red Curry Roasted Duck, Cow's Milk, 60
 Clear Soup with Tofu and Minced Pork, Soy, 40
-Pad Thai with Fresh Shrimp, Seafood, Peanuts, 50
+Pad Thai with Fresh Shrimp, Seafood+Peanuts, 50
 Pad Thai with Pork, Peanuts, 40
 Hainanese Chicken Rice, -, 40
 Roast Pork Rice, -, 40
@@ -30,10 +30,10 @@ Chicken Fried Rice, -, 40
 Seafood Fried Rice, Seafood, 60
 Pad See Ew with Pork, Wheat, 40
 Pad See Ew with Chicken, Wheat, 40
-Pad See Ew with Seafood, Seafood, Wheat, 50
+Pad See Ew with Seafood, Seafood+Wheat, 50
 Rad Na with Pork, Wheat, 40
 Rad Na with Chicken, Wheat, 40
-Rad Na with Seafood, Seafood, Wheat, 50
+Rad Na with Seafood, Seafood+Wheat, 50
 Chicken Khao Soi, Wheat, 50
 Beef Khao Soi, Wheat, 50
 Rice Noodles with Curry Sauce, -, 30
