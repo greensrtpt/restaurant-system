@@ -6,6 +6,8 @@
 #include <vector>
 #include <limits>
 #include <string>
+#include <random> // ใช้ random_device
+#include <chrono> // ใช้สำหรับสุ่ม seed
 
 using namespace std;
 
@@ -133,24 +135,41 @@ void searchMenu() {
     }
 }
 
-// แสดงรายการแนะนำ (แค่ 3 รายการแรก)
 void recommendMenu() {
     if (menu.empty()) {
         cout << "\nNo menu items available for recommendation." << endl;
         return;
     }
-    cout << "\n---- Recommended Menu ----" << endl;
-    int count = 0;
 
-    for (map<string, MenuItem>::const_iterator it = menu.begin(); it != menu.end(); ++it) {
-        cout << "- " << it->first 
-             << " (Allergy: " << it->second.allergy << ")"
-             << " - $" << fixed << setprecision(2) << it->second.price << endl;
-        if (++count >= 3)
-            break;
+    vector<pair<string, MenuItem> > menuList(menu.begin(), menu.end());
+
+    // ใช้ random_device เพื่อให้สุ่มจริง ๆ
+    random_device rd;
+    mt19937 g(rd()); // ใช้ hardware entropy (ค่าที่สุ่มจริง ๆ)
+
+    cout << "\nBefore shuffle:" << endl;
+    for (vector<pair<string, MenuItem> >::iterator it = menuList.begin(); it != menuList.end(); ++it) {
+        cout << it->first << " ";
+    }
+    
+    cout << endl;
+
+    shuffle(menuList.begin(), menuList.end(), g); // สับเปลี่ยนเมนู
+
+    cout << "After shuffle:" << endl;
+    for (vector<pair<string, MenuItem> >::iterator it = menuList.begin(); it != menuList.end(); ++it) {
+        cout << it->first << " ";
+    }
+    
+    cout << endl;
+
+    cout << "\n---- Recommended Menu (Try Something New!) ----" << endl;
+    for (int i = 0; i < min(3, (int)menuList.size()); i++) {
+        cout << "- " << menuList[i].first 
+             << " (Allergy: " << menuList[i].second.allergy << ")"
+             << " - $" << fixed << setprecision(2) << menuList[i].second.price << endl;
     }
 }
-
 // ฟังก์ชันสั่งอาหาร
 void orderFood() {
     if (menu.empty()) {
