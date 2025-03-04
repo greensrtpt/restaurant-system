@@ -152,24 +152,12 @@ void recommendMenu() {
 
     vector<pair<string, MenuItem> > menuList(menu.begin(), menu.end());
 
-    // ใช้ random_device เพื่อให้สุ่มจริง ๆ
+    // สุ่ม seed หนึ่งครั้งจาก random_device
     random_device rd;
-    mt19937 g(rd()); // ใช้ hardware entropy (ค่าที่สุ่มจริง ๆ)
+    mt19937 g(rd());
 
-    cout << "\nBefore shuffle:" << endl;
-    for (const auto& item : menuList) {
-        cout << item.first << " ";
-    }
-    cout << endl;
-
-    shuffle(menuList.begin(), menuList.end(), g); // สับเปลี่ยนเมนู
-
-    cout << "After shuffle:" << endl;
-    for (vector<pair<string, MenuItem> >::iterator it = menuList.begin(); it != menuList.end(); ++it) {
-        cout << it->first << " ";
-    }
-    
-    cout << endl;
+    // ใช้ shuffle() เพื่อกระจายรายการแบบสุ่ม
+    shuffle(menuList.begin(), menuList.end(), g);
 
     cout << "\n---- Recommended Menu (Try Something New!) ----" << endl;
     for (int i = 0; i < min(3, (int)menuList.size()); i++) {
@@ -178,6 +166,7 @@ void recommendMenu() {
              << " - $" << fixed << setprecision(2) << menuList[i].second.price << endl;
     }
 }
+
 // ฟังก์ชันสั่งอาหาร
 void orderFood() {
     if (menu.empty()) {
